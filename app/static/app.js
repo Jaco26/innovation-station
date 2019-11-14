@@ -2,23 +2,29 @@
 
 const App = (function() {
 
+  const AppNavbar = {
+    template: //html
+    `<nav class="navbar">
+      <div class="navbar-brand">
+        <router-link class="nav-item" exact to="/">Recipes</router-link>
+      </div>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <router-link exact to="/recipe">Create</router-link>
+        </li>
+      </ul>
+    </nav>`
+  }
+
 
   return {
+    components: {
+      AppNavbar
+    },
     template: //html
-    `<div class="container-fluid text-primary">
-      
-      <nav class="navbar">
-        <div class="title">
-          <router-link exact to="/">Recipes</router-link>
-        </div>
-        <ul>
-          <li>
-            <router-link exact class="navlink" to="/recipe">Create</router-link>
-          </li>
-        </ul>
-      </nav>
-      <hr>
-      <main class="content">
+    `<div>
+      <AppNavbar />
+      <main class="container-fluid">
         <router-view></router-view>
       </main>
     </div>`,

@@ -1,0 +1,14 @@
+a {
+  color: #40484b;
+  text-decoration: none; 
+}
+a:visited {
+  color: transparent;
+}
+a:hover {
+  color: rgb(10, 139, 245);
+}
+.router-link-active, .router-link-exact-active {
+  color: #035f94;
+  text-decoration: underline;
+}
