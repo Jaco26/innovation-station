@@ -70,7 +70,7 @@ def recipe(id=''):
         'html': body.get('html'),
         'id': id,
       })
-
+      db.commit()
       return jsonify({})
 
     elif request.method == 'DELETE':

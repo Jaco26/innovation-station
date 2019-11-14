@@ -4,26 +4,45 @@ const TheRecipeForm = (function() {
     name: 'TheRecipeForm',
     props: {
       label: String,
-      action: {
-        type: String,
-        required: true,
-      },
+      title: String,
+      description: String,
+      markdown: String,
     },
     template: // html
     `<div>
       <h4 v-if="label">{{label}}</h4>
-      <form @submit.prevent="$store.dispatch('recipe/' + action)">
+      <form @submit.prevent="$emit('submit')">
         <div class="form-group">
           <label for="title">Title</label>
-          <input class="form-control" type="text" id="title" required v-model="title">
+          <input
+            class="form-control"
+            type="text" id="title"
+            required
+            :value="title"
+            @input="$emit('update:title', $event.target.value)"
+          />
         </div>
         <div class="form-group">
           <label for="description">Description</label>
-          <input class="form-control" type="text" id="description" v-model="description">
+          <input
+            class="form-control"
+            type="text"
+            id="description"
+            :value="description"
+            @input="$emit('update:description', $event.target.value)"
+          />
         </div>
         <div class="form-group">
           <label for="content">Content</label>
-          <textarea rows="10" style="resize: none;" class="form-control" type="text" id="content" v-model="markdown"></textarea>
+          <textarea
+            rows="10"
+            style="resize: none;"
+            class="form-control"
+            type="text"
+            id="content"
+            :value="markdown"
+            @input="$emit('update:markdown', { markdown: $event.target.value, html: processMarkdown($event.target.value)});"
+          ></textarea>
         </div>
         <div class="form-group">
           <button class="btn btn-primary" id="submit-recipe" type="submit">Submit</button>
@@ -31,14 +50,13 @@ const TheRecipeForm = (function() {
       </form>
     </div>`,
     methods: {
-      ...Vuex.mapMutations('recipe', ['SET_RECIPE']),
       processMarkdown(input) {
         return input.split('\n').reduce((accum, line, i, lines) => {
 
           line = line.replace(/</g, '&lt;')
           line = line.replace(/>/g, '&gt;')
   
-        // Create unordered list tags
+          // Create unordered list tags
           if (line.startsWith('-')) {
             const prev = lines[i - 1]
             const next = lines[i + 1]
@@ -73,23 +91,6 @@ const TheRecipeForm = (function() {
           return accum + line
         }, '')
       }
-    },
-    computed: {
-      title: {
-        get() { return this.$store.state.recipe.item.title },
-        set(val) { this.SET_RECIPE(['title', val]) }
-      },
-      description: {
-        get() { return this.$store.state.recipe.item.description },
-        set(val) { this.SET_RECIPE(['description', val]) }
-      },
-      markdown: {
-        get() { return this.$store.state.recipe.item.markdown },
-        set(val) {
-          this.SET_RECIPE(['markdown', val])
-          this.SET_RECIPE(['html', this.processMarkdown(val)])
-        }
-      },
     },
   }
 

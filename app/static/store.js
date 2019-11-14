@@ -10,33 +10,34 @@ const store = (function() {
     }
   }
 
+  function createRecipeItemState() {
+    return {
+      id: '',
+      title: '',
+      description: '',
+      markdown: '',
+      html: '',
+      tags: [],
+    }
+  }
+
+  function createRecipeState() {
+    return {
+      busy: false,
+      errors: [],
+      item: createRecipeItemState()
+    }
+  }
+
 
   const recipe = {
     namespaced: true,
-    state: {
-      busy: false,
-      errors: [],
-      item: {
-        id: '',
-        title: '',
-        description: '',
-        markdown: '',
-        html: '',
-        tags: [],
-      }
-    },
+    state: createRecipeState(),
     mutations: {
       RESET(state) {
-        state.busy = false;
-        state.errors = []
-        state.item = {
-          id: '',
-          title: '',
-          description: '',
-          markdown: '',
-          html: '',
-          tags: [],
-        }
+        Object.entries(createRecipeState()).forEach(([key, val]) => {
+          state[key] = val
+        })
       },
       SET(state, [key, val]) {
         if (state[key] !== undefined) {
@@ -62,27 +63,30 @@ const store = (function() {
           commit('SET', ['busy', false])
         }
       },
-      async UPDATE_RECIPE() {
+      async UPDATE_RECIPE({ commit, rootState, rootGetters }) {
         try {
-          
+          commit('SET', ['busy', true])
+          await this.$api.put(`recipe/${rootState.selectedId}`, rootGetters.selectedRecipe)
         } catch (error) {
-          
+          commit('SET', ['errors', [...state.errors, error.message]])
         } finally {
-
+          commit('SET', ['busy', false])
         }
       },
       async DELETE_RECIPE() {
         try {
-          
+          commit('SET', ['busy', true])
+          await this.$api.delete(`recipe/${rootState.selectedId}`)
         } catch (error) {
-          
+          commit('SET', ['errors', [...state.errors, error.message]])
         } finally {
-
+          commit('SET', ['busy', false])
         }
       },
     }
   }
-
+   
+  
 
   return new Vuex.Store({
     modules: {
@@ -90,15 +94,20 @@ const store = (function() {
     },
     state: {
       errors: [],
-
       busy: false,
       recipeList: [],
-      selectedId: null,
+      selectedId: '',
     },
     mutations: {
       SET(state, [key, val]) {
         if (state[key] !== undefined) {
           state[key] = val
+        }
+      },
+      UPDATE_SELECTED(state, [key, val]) {
+        const selected = state.recipeList.find(r => r.id === state.selectedId)
+        if (selected) {
+          selected[key] = val
         }
       }
     },
@@ -114,6 +123,16 @@ const store = (function() {
         } finally {
           commit('SET', ['busy', false])
         }
+      }
+    },
+    getters: {
+      selectedRecipe(state) {
+        let rv = createRecipeItemState()
+        const selected = state.recipeList.find(r => r.id === state.selectedId)
+        if (selected) {
+          rv = selected
+        }
+        return rv
       }
     }
   })

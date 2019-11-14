@@ -34,6 +34,15 @@ const App = (function() {
         limit: 10,
       })
     },
+    watch: {
+      '$route': {
+        deep: true,
+        immediate: true,
+        handler(newVal, oldVal) {
+          this.$store.commit('SET', ['selectedId', newVal.params.id || null])
+        }
+      }
+    },
   }
 
 })()

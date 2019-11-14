@@ -6,7 +6,7 @@ CREATE TABLE recipe (
   id TEXT PRIMARY KEY,
   date_created TIMESTAMP,
   date_updated TIMESTAMP,
-  title TEXT,
+  title TEXT UNIQUE NOT NULL,
   description TEXT,
   markdown TEXT,
   html TEXT
@@ -14,7 +14,7 @@ CREATE TABLE recipe (
 
 CREATE TABLE tag (
   id TEXT PRIMARY KEY,
-  name TEXT
+  name TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE recipe_tag (
