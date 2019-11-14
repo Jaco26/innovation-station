@@ -1,0 +1,53 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  word-wrap: break-word;
+}
+
+.container {
+  display: block;
+  margin: 0 1rem;
+  padding-bottom: 1rem;
+}
+
+.row {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.shrink {
+  flex: 0 1 auto;
+}
+
+.row.justify-center {
+  justify-content: center;
+}
+
+.row.justify-start {
+  justify-content: flex-start;
+}
+
+.row.justify-end {
+  justify-content: flex-end;
+}
+
+.row.justify-stretch {
+  justify-content: stretch;
+}
+
+.row.align-stretch {
+  align-items: stretch;
+}
+
+.row.align-center {
+  align-items: center;
+}
+
+.row.align-start {
+  align-items: flex-start;
+}
+
+.row.align-end {
+  align-items: flex-end;
+}

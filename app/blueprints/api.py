@@ -10,67 +10,73 @@ def recipes():
   try:
     db = get_db()
     res = db.execute('SELECT * FROM recipe').fetchall()
-    return jsonify(res)
+    return jsonify([dict(row) for row in res])
   except BaseException as e:
     print(e)
     abort(500)
 
 
-@api.route('/recipe/<id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@api.route('/recipe', methods=['POST'])
+@api.route('/recipe/<id>', methods=['GET', 'PUT', 'DELETE'])
 def recipe(id=''):
-  db = get_db()
+  try:
+    db = get_db()
 
-  if request.method == 'GET':
-    sql = 'SELECT * FROM recipe WHERE id = ?'
-    recipe = db.execute(sql, (id,)).fetchone()
-    return jsonify(recipe)
+    if request.method == 'GET':
+      sql = 'SELECT * FROM recipe WHERE id = ?'
+      recipe = db.execute(sql, (id,)).fetchone()
+      return jsonify(recipe)
 
-  elif request.method == 'POST':
-    body = request.get_json()
+    elif request.method == 'POST':
+      body = request.get_json()
 
-    id = uuid.uuid4().hex()
-    date_created = datetime.utcnow()
-    title = body.get('title', '')
-    description = body.get('description', '')
-    markdown = body.get('markdown', '')
-    html = body.get('html', '')
+      id = uuid.uuid4().hex
+      date_created = datetime.utcnow()
+      title = body.get('title')
+      description = body.get('description')
+      markdown = body.get('markdown')
+      html = body.get('html')
 
-    sql = '''INSERT INTO recipe (
-              id,
-              date_created,
-              title,
-              description,
-              markdown,
-              html
-            ) VALUES (?,?,?,?,?,?)
-          '''
+      sql = '''INSERT INTO recipe (
+                id,
+                date_created,
+                title,
+                description,
+                markdown,
+                html
+              ) VALUES (?,?,?,?,?,?)
+            '''
 
-    recipe = db.execute(sql, (id, date_created, title, description, markdown, html))
-    return jsonify({}), 201
+      db.execute(sql, (id, date_created, title, description, markdown, html))
+      db.commit()
+      return jsonify({}), 201
 
-  elif request.method == 'PUT':
-    body = request.get_json()
+    elif request.method == 'PUT':
+      body = request.get_json()
 
-    sql = '''UPDATE recipe SET 
-              date_updated=:date_updated,
-              title=:title,
-              description=:description,
-              markdown=:markdown,
-              html=:html
-            WHERE id=:id
-          '''
-    db.execute(sql, {
-      'date_updated': datetime.utcnow(),
-      'title': body.get('title'),
-      'description': body.get('description'),
-      'markdown': body.get('markdown'),
-      'html': body.get('html'),
-      'id': id,
-    })
+      sql = '''UPDATE recipe SET 
+                date_updated=:date_updated,
+                title=:title,
+                description=:description,
+                markdown=:markdown,
+                html=:html
+              WHERE id=:id
+            '''
+      db.execute(sql, {
+        'date_updated': datetime.utcnow(),
+        'title': body.get('title'),
+        'description': body.get('description'),
+        'markdown': body.get('markdown'),
+        'html': body.get('html'),
+        'id': id,
+      })
 
-    return jsonify({})
+      return jsonify({})
 
-  elif request.method == 'DELETE':
-    db.execute('DELETE FROM recipe WHERE id=?', (id,))
+    elif request.method == 'DELETE':
+      db.execute('DELETE FROM recipe WHERE id=?', (id,))
 
-    return jsonify({})
+      return jsonify({})
+
+  except:
+    abort(500)

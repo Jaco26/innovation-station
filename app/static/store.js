@@ -12,8 +12,10 @@ const store = (function() {
 
 
   const recipe = {
+    namespaced: true,
     state: {
       busy: false,
+      errors: [],
       item: {
         id: '',
         title: '',
@@ -24,20 +26,40 @@ const store = (function() {
       }
     },
     mutations: {
+      RESET(state) {
+        state.busy = false;
+        state.errors = []
+        state.item = {
+          id: '',
+          title: '',
+          description: '',
+          markdown: '',
+          html: '',
+          tags: [],
+        }
+      },
       SET(state, [key, val]) {
         if (state[key] !== undefined) {
           state[key] = val
         }
+      },
+      SET_RECIPE(state, [key, val]) {
+        if (state.item[key] !== undefined) {
+          state.item[key] = val
+        }
       }
     },
     actions: {
-      async ADD_RECIPE() {
+      async ADD_RECIPE({ commit, dispatch, state, rootState }) {
         try {
-          
+          commit('SET', ['busy', true])
+          await this.$api.post('/recipe', state.item)
+          commit('SET', ['recipeList', [...rootState.recipeList, state.item]], { root: true })
+          commit('RESET')
         } catch (error) {
-          
+          commit('SET', ['errors', [...state.errors, error.message]])
         } finally {
-
+          commit('SET', ['busy', false])
         }
       },
       async UPDATE_RECIPE() {
