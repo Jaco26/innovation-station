@@ -6,22 +6,42 @@ const PageRecipeSaved = {
   },
   template: //html
   `<div class="row">
-    <div class="col-md-6">
-      <h1>You've previously saved this recipe:</h1>
-      <TheRecipeForm 
+    <div :class="{ 'col-md-6' : editing }">
+      <TheRecipeForm
+        v-if="editing"
         label="Edit this recipe"
+        actionText="Save Edits"
         :title.sync="title"
         :description.sync="description"
         :markdown.sync="markdown"
         @submit="$store.dispatch('recipe/UPDATE_RECIPE')"
       />
     </div>
-    <div class="col-md-6">
+    <div class="col" :class="{ 'col-md-6' : editing }">
+      <button class="btn small" :class="editing ? 'btn-primary' : 'btn-light'" @click="toggleEdit">{{ editing ? 'Save Edits' : 'edit'}}</button>
       <RecipeDisplay :recipe="$store.getters.selectedRecipe" />
     </div>
   </div>`,
+  data() {
+    return {
+      editing: false
+    }
+  },
   methods: {
-    ...Vuex.mapMutations(['UPDATE_SELECTED'])
+    ...Vuex.mapMutations(['UPDATE_SELECTED']),
+    async toggleEdit() {
+      if (this.editing) {
+        await this.$store.dispatch('recipe/UPDATE_RECIPE')
+        this.$nextTick(() => {
+          if (!this.$store.state.recipe.messages.length) {
+            console.log(this.$store.state.recipe.messages)
+            this.editing = false
+          }
+        })
+      } else {
+        this.editing = true
+      }
+    }
   },
   computed: {
     title: {
@@ -39,5 +59,5 @@ const PageRecipeSaved = {
         this.UPDATE_SELECTED(['html', val.html])
       }
     },
-  }
+  },
 }

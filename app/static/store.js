@@ -25,6 +25,7 @@ const store = (function() {
     return {
       busy: false,
       errors: [],
+      messages: [],
       item: createRecipeItemState()
     }
   }
@@ -54,8 +55,10 @@ const store = (function() {
       async ADD_RECIPE({ commit, dispatch, state, rootState }) {
         try {
           commit('SET', ['busy', true])
-          await this.$api.post('/recipe', state.item)
-          commit('SET', ['recipeList', [...rootState.recipeList, state.item]], { root: true })
+          commit('SET', ['messages', []])
+          const res = await this.$api.post('/recipe', state.item)
+          commit('UPDATE_RECIPE_COLLECTION', { ...state.item, id: res.data }, { root: true })
+          commit('SET', ['messages', res.messages])
           commit('RESET')
         } catch (error) {
           commit('SET', ['errors', [...state.errors, error.message]])
@@ -63,20 +66,24 @@ const store = (function() {
           commit('SET', ['busy', false])
         }
       },
-      async UPDATE_RECIPE({ commit, rootState, rootGetters }) {
+      async UPDATE_RECIPE({ commit, state, rootState, rootGetters }) {
         try {
           commit('SET', ['busy', true])
-          await this.$api.put(`recipe/${rootState.selectedId}`, rootGetters.selectedRecipe)
+          commit('SET', ['messages', []])
+          const res = await this.$api.put(`recipe/${rootState.selectedId}`, rootGetters.selectedRecipe)
+          commit('SET', ['messages', res.messages])
         } catch (error) {
           commit('SET', ['errors', [...state.errors, error.message]])
         } finally {
           commit('SET', ['busy', false])
         }
       },
-      async DELETE_RECIPE() {
+      async DELETE_RECIPE({ commit, state, rootState }) {
         try {
           commit('SET', ['busy', true])
-          await this.$api.delete(`recipe/${rootState.selectedId}`)
+          commit('SET', ['messages', []])
+          const res = await this.$api.delete(`recipe/${rootState.selectedId}`)
+          commit('SET', ['messages', res.messages])
         } catch (error) {
           commit('SET', ['errors', [...state.errors, error.message]])
         } finally {
@@ -94,8 +101,9 @@ const store = (function() {
     },
     state: {
       errors: [],
+      messages: [],
       busy: false,
-      recipeList: [],
+      recipes: {},
       selectedId: '',
     },
     mutations: {
@@ -105,19 +113,29 @@ const store = (function() {
         }
       },
       UPDATE_SELECTED(state, [key, val]) {
-        const selected = state.recipeList.find(r => r.id === state.selectedId)
+        // const selected = state.recipeList.find(r => r.id === state.selectedId)
+        const selected = state.recipes[state.selectedId]
         if (selected) {
           selected[key] = val
         }
-      }
+      },
+      UPDATE_RECIPE_COLLECTION(state, recipe) {
+        if (Array.isArray(recipe)) {
+          state.recipes = recipe.reduce((acc, r) => ({ ...acc, [r.id]: r }), {})
+        } else {
+          state.recipes = { ...state.recipes, [recipe.id]: recipe }
+        }
+      },
     },
     actions: {
       async FETCH_RECIPES({ commit, state, dispatch }, { cursor, limit }) {
         try {
           commit('SET', ['busy', true])
+          commit('SET', ['messages', []])
           const query = util.encodeQueryString({ cursor, limit })
           const res = await this.$api.get('/recipes' + query)
-          commit('SET', ['recipeList', [...state.recipeList, ...res.data]])
+          commit('UPDATE_RECIPE_COLLECTION', res.data)
+          commit('SET', ['messages', res.messages])
         } catch (error) {
           commit('SET', ['errors', [...state.errors, error.message]])
         } finally {
@@ -126,9 +144,13 @@ const store = (function() {
       }
     },
     getters: {
+      recipeList(state) {
+        return Object.values(state.recipes)
+      },
       selectedRecipe(state) {
         let rv = createRecipeItemState()
-        const selected = state.recipeList.find(r => r.id === state.selectedId)
+        // const selected = state.recipeList.find(r => r.id === state.selectedId)
+        const selected = state.recipes[state.selectedId]
         if (selected) {
           rv = selected
         }

@@ -1,5 +1,6 @@
 import sqlite3
 import click
+import functools
 from flask import current_app, g
 from flask.cli import with_appcontext
 
@@ -31,3 +32,43 @@ def init_db_command():
 def init_app(app):
   app.teardown_appcontext(close_db)
   app.cli.add_command(init_db_command)
+
+# def execute_query(fetch='all'):
+#   def func_accepter(func):
+#     @functools.wraps(func)
+#     def wrapper(*args, **kwargs):
+#       db = get_db()
+#       sql, *params = func(*args, **kwargs)
+#       sql = sql.lower().strip()
+#       try:
+#         if sql.startswith('select'):
+#           query = db.execute(sql, params)
+#           if fetch == 'all':
+#             return query.fetchall()
+#           elif fetch == 'one':
+#             return query.fetchone()
+#         elif sql.startswith('insert') or sql.startswith('update') or sql.startswith('delete'):
+#           db.execute(sql, params)
+#           db.commit()
+#           return True
+#       except BaseException as err:
+#         print('Query Failed: %s\nError: %s' % (sql, str(err)))
+#         raise err
+
+# def execute_query(sql, *params):
+#   db = get_db()
+#   sql = sql.lower().strip()
+#   try:
+#     if sql.startswith('select'):
+#       query = db.execute(sql, params)
+#       if fetch == 'all':
+#         return query.fetchall()
+#       elif fetch == 'one':
+#         return query.fetchone()
+#     elif sql.startswith('insert') or sql.startswith('update') or sql.startswith('delete'):
+#       db.execute(sql, params)
+#       db.commit()
+#       return True
+#   except BaseException as err:
+#     print('Query Failed: %s\nError: %s' % (sql, str(err)))
+#     raise err

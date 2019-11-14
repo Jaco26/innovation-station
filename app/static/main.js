@@ -31,13 +31,13 @@ function recursivelyCasify(obj, accum, casifier) {
 
 $api.interceptors.response.use(res => {
   if (res.data) {
-    if (Array.isArray(res.data)) {
-      res.data = res.data.map(x => recursivelyCasify(x, {}, camelCaseify))
-    } else if (typeof res.data === 'object') {
-      res.data = recursivelyCasify(res.data, {}, camelCaseify)
+    if (Array.isArray(res.data.data)) {
+      res.data.data = res.data.data.map(x => recursivelyCasify(x, {}, camelCaseify))
+    } else if (res.data.data && typeof res.data.data === 'object') {
+      res.data.data = recursivelyCasify(res.data.data, {}, camelCaseify)
     }
   }
-  return res
+  return res.data
 })
 
 $api.interceptors.request.use(req => {
