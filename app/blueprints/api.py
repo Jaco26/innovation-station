@@ -1,4 +1,5 @@
 import uuid
+import re
 from sqlite3 import Error as SQLError
 from datetime import datetime
 from flask import Blueprint, request, jsonify, abort
@@ -47,6 +48,9 @@ def recipe(id=''):
       id = uuid.uuid4().hex
       date_created = datetime.utcnow()
       title = body.get('title')
+      print(title)
+      unique_title = re.sub(r'\s+', '-', title.lower())
+      print(unique_title)
       description = body.get('description')
       markdown = body.get('markdown')
       html = body.get('html')
@@ -55,13 +59,14 @@ def recipe(id=''):
                 id,
                 date_created,
                 title,
+                unique_title,
                 description,
                 markdown,
                 html
-              ) VALUES (?,?,?,?,?,?)
+              ) VALUES (?,?,?,?,?,?,?)
             '''
 
-      db.execute(sql, (id, date_created, title, description, markdown, html))
+      db.execute(sql, (id, date_created, title, unique_title, description, markdown, html))
       db.commit()
 
       res.data = id
@@ -71,10 +76,16 @@ def recipe(id=''):
     elif request.method == 'PUT':
       body = request.get_json()
 
-      query1 = db.execute('SELECT * FROM recipe WHERE title = ? AND id != ?', [body.get('title'), id])
+      title = body.get('title')
+      unique_title = re.sub(r'\s+', '-', title.lower())
+      description = body.get('description')
+      markdown = body.get('markdown')
+      html = body.get('html')
 
-      if query1.fetchone():
-        res.messages.append('There is already a recipe called "{}". Please choose another title'.format(body.get('title')))
+      query1 = db.execute('SELECT * FROM recipe WHERE unique_title = ? AND id != ?', [unique_title, id])
+      exists =  query1.fetchone()
+      if exists:
+        res.messages.append('There is already a recipe called "{}". Please choose another title'.format(title))
       else:
         query2 = '''
         UPDATE recipe SET 
@@ -87,10 +98,11 @@ def recipe(id=''):
 
         db.execute(query2, {
           'date_updated': datetime.utcnow(),
-          'title': body.get('title'),
-          'description': body.get('description'),
-          'markdown': body.get('markdown'),
-          'html': body.get('html'),
+          'title': title,
+          'unique_title': unique_title,
+          'description': description,
+          'markdown': markdown,
+          'html': html,
           'id': id,
         })
         db.commit()

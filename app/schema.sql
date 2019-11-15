@@ -6,7 +6,8 @@ CREATE TABLE recipe (
   id TEXT PRIMARY KEY,
   date_created TIMESTAMP,
   date_updated TIMESTAMP,
-  title TEXT UNIQUE NOT NULL,
+  unique_title TEXT UNIQUE NOT NULL,
+  title TEXT,
   description TEXT,
   markdown TEXT,
   html TEXT

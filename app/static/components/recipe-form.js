@@ -47,8 +47,8 @@ const TheRecipeForm = (function() {
           })
 
           // shortcuts
-          line = line.replace(/{ing}|:ing/g, 'Ingredients')
-          line = line.replace(/{ins}|:ins/g, 'Instructions')
+          line = line.replace(/{ing}|:ing/gi, 'Ingredients')
+          line = line.replace(/{ins}|:ins/gi, 'Instructions')
   
           return accum + line
         }, '')

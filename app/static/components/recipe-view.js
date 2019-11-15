@@ -4,6 +4,7 @@ const RecipeDisplay = (function() {
     name: 'RecipeView',
     props: {
       isPreview: Boolean,
+      editing: Boolean,
       recipe: Object,
     },
     template: //html

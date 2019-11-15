@@ -18,8 +18,12 @@ const PageRecipeSaved = {
       />
     </div>
     <div class="col" :class="{ 'col-md-6' : editing }">
-      <button class="btn small" :class="editing ? 'btn-primary' : 'btn-light'" @click="toggleEdit">{{ editing ? 'Save Edits' : 'edit'}}</button>
-      <RecipeDisplay :recipe="$store.getters.selectedRecipe" />
+      <button class="btn" :class="editing ? 'btn-primary' : 'btn-light'" @click="toggleEdit">{{ editing ? 'Save Edits' : 'edit'}}</button>
+      <RecipeDisplay
+        :editing="editing"
+        :recipe="$store.getters.selectedRecipe"
+        @toggleEdit="toggleEdit"
+      />
     </div>
   </div>`,
   data() {
