@@ -33,10 +33,10 @@ export default {
         }
     
         // Create heading tags
-        line = line.replace(/#{1}.*/g, x => x.replace(x, `<h3>${x.slice(1)}</h3>`))
-        line = line.replace(/#{2}.*/g, x => x.replace(x, `<h4>${x.slice(2)}</h4>`))
-        line = line.replace(/#{3}.*/g, x => x.replace(x, `<h5>${x.slice(3)}</h5>`))
         line = line.replace(/#{4}.*/g, x => x.replace(x, `<h6>${x.slice(4)}</h6>`))
+        line = line.replace(/#{3}.*/g, x => x.replace(x, `<h5>${x.slice(3)}</h5>`))
+        line = line.replace(/#{2}.*/g, x => x.replace(x, `<h4>${x.slice(2)}</h4>`))
+        line = line.replace(/#{1}.*/g, x => x.replace(x, `<h3>${x.slice(1)}</h3>`))
     
         // Create paragraph tags
         line = line.replace(/.*(?!\n)?/g, x => {

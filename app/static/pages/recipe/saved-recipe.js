@@ -1,5 +1,5 @@
-import RecipeForm from '../../components/recipe-form.js'
-import RecipeDisplay from '../../components/recipe-display.js'
+import RecipeForm from '/static/components/recipe-form.js'
+import RecipeDisplay from '/static/components/recipe-display.js'
 
 export default {
   name: 'SavedRecipe',
@@ -22,11 +22,7 @@ export default {
     </div>
     <div class="col" :class="{ 'col-md-6' : editing }">
       <button class="btn" :class="editing ? 'btn-primary' : 'btn-light'" @click="toggleEdit">{{ editing ? 'Save Edits' : 'edit'}}</button>
-      <RecipeDisplay
-        :editing="editing"
-        :recipe="$store.getters.selectedRecipe"
-        @toggleEdit="toggleEdit"
-      />
+      <RecipeDisplay :recipe="$store.getters.selectedRecipe" />
     </div>
   </div>`,
   data() {
