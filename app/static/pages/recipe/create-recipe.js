@@ -1,13 +1,16 @@
-const PageRecipeNew = {
-  name: 'NewRecipe',
+import RecipeForm from '../../components/recipe-form.js'
+import RecipeDisplay from '../../components/recipe-display.js'
+
+export default {
+  name: 'CreateRecipe',
   components: {
-    TheRecipeForm,
+    RecipeForm,
     RecipeDisplay
   },
   template: //html
   `<div class="row">
     <div class="col-md-6">
-      <TheRecipeForm
+      <RecipeForm
         label="Add a new recipe"
         :title.sync="title"
         :description.sync="description"

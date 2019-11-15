@@ -1,25 +1,31 @@
 
-const router = new VueRouter({
+import HomePage from './pages/home.js'
+import RecipePageContainer from './pages/recipe.js'
+import CreateRecipePage from './pages/recipe/create-recipe.js'
+import SavedRecipePage from './pages/recipe/saved-recipe.js'
+
+
+export default new VueRouter({
   mode: 'history',
   routes: [
     {
       path: '/',
       name: 'home',
-      component: PageHome
+      component: HomePage
     },
     {
       path: '/recipe',
-      component: PageRecipeContainer,
+      component: RecipePageContainer,
       children: [
         {
           path: '',
-          name: 'new-recipe',
-          component: PageRecipeNew
+          name: 'create-recipe',
+          component: CreateRecipePage
         },
         {
           path: ':id',
           name: 'saved-recipe',
-          component: PageRecipeSaved
+          component: SavedRecipePage
         }
       ]
     },

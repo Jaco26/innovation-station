@@ -1,3 +1,6 @@
+import router from './router.js'
+import store from './store/store.js'
+import App from './app.js'
 
 const $api = axios.create({
   baseURL: '/api',
@@ -59,6 +62,5 @@ const app = new Vue({
     return h('App')
   },
 })
-
 
 app.$mount('#app')

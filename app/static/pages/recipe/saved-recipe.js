@@ -1,13 +1,16 @@
-const PageRecipeSaved = {
+import RecipeForm from '../../components/recipe-form.js'
+import RecipeDisplay from '../../components/recipe-display.js'
+
+export default {
   name: 'SavedRecipe',
   components: {
-    TheRecipeForm,
+    RecipeForm,
     RecipeDisplay,
   },
   template: //html
   `<div class="row">
     <div :class="{ 'col-md-6' : editing }">
-      <TheRecipeForm
+      <RecipeForm
         v-if="editing"
         label="Edit this recipe"
         actionText="Save Edits"

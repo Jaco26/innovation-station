@@ -1,4 +1,4 @@
-const PageRecipeContainer = {
+export default {
   name: 'RecipeContainer',
   template: //html
   `<div>
