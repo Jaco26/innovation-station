@@ -26,49 +26,16 @@ def init_db():
 @click.command('init-db')
 @with_appcontext
 def init_db_command():
-  init_db()
-  click.echo('Initialized the database!')
+  for_real = input('\n> Hey, just so you know, this will drop all tables currently defined and destroy all data in them.' +
+                  '\n> Type "MY NAME IS DROPPY DROPPERSON" to continue. Enter anything else to cancel. ')
+  if for_real.strip() == 'MY NAME IS DROPPY DROPPERSON':
+    init_db()
+    click.echo('Initialized the database!')
+  else:
+    click.echo('Okay 👍. You\'ll figure something else out 😀.')
 
 def init_app(app):
   app.teardown_appcontext(close_db)
   app.cli.add_command(init_db_command)
 
-# def execute_query(fetch='all'):
-#   def func_accepter(func):
-#     @functools.wraps(func)
-#     def wrapper(*args, **kwargs):
-#       db = get_db()
-#       sql, *params = func(*args, **kwargs)
-#       sql = sql.lower().strip()
-#       try:
-#         if sql.startswith('select'):
-#           query = db.execute(sql, params)
-#           if fetch == 'all':
-#             return query.fetchall()
-#           elif fetch == 'one':
-#             return query.fetchone()
-#         elif sql.startswith('insert') or sql.startswith('update') or sql.startswith('delete'):
-#           db.execute(sql, params)
-#           db.commit()
-#           return True
-#       except BaseException as err:
-#         print('Query Failed: %s\nError: %s' % (sql, str(err)))
-#         raise err
 
-# def execute_query(sql, *params):
-#   db = get_db()
-#   sql = sql.lower().strip()
-#   try:
-#     if sql.startswith('select'):
-#       query = db.execute(sql, params)
-#       if fetch == 'all':
-#         return query.fetchall()
-#       elif fetch == 'one':
-#         return query.fetchone()
-#     elif sql.startswith('insert') or sql.startswith('update') or sql.startswith('delete'):
-#       db.execute(sql, params)
-#       db.commit()
-#       return True
-#   except BaseException as err:
-#     print('Query Failed: %s\nError: %s' % (sql, str(err)))
-#     raise err
