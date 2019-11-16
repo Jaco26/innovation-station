@@ -22,7 +22,7 @@ export default {
     </div>
     <div class="col" :class="{ 'col-md-6' : editing }">
       <button class="btn" :class="editing ? 'btn-primary' : 'btn-light'" @click="toggleEdit">{{ editing ? 'Save Edits' : 'edit'}}</button>
-      <RecipeDisplay :recipe="$store.getters.selectedRecipe" />
+      <RecipeDisplay :recipe="$store.state.editableRecipe" />
     </div>
   </div>`,
   data() {
@@ -31,7 +31,9 @@ export default {
     }
   },
   methods: {
-    ...Vuex.mapMutations(['UPDATE_SELECTED']),
+    ...Vuex.mapMutations('editableRecipe', {
+      edit: 'SET'
+    }),
     async toggleEdit() {
       if (this.editing) {
         await this.$store.dispatch('recipe/UPDATE_RECIPE')
@@ -48,18 +50,18 @@ export default {
   },
   computed: {
     title: {
-      get() { return this.$store.getters.selectedRecipe.title },
-      set(val) { this.UPDATE_SELECTED(['title', val]) }
+      get() { return this.$store.state.editableRecipe.title },
+      set(val) { this.edit(['title', val]) }
     },
     description: {
-      get() { return this.$store.getters.selectedRecipe.description },
-      set(val) { this.UPDATE_SELECTED(['description', val]) }
+      get() { return this.$store.state.editableRecipe.description },
+      set(val) { this.edit(['description', val]) }
     },
     markdown: {
-      get() { return this.$store.getters.selectedRecipe.markdown },
+      get() { return this.$store.state.editableRecipe.markdown },
       set(val) {
-        this.UPDATE_SELECTED(['markdown', val.markdown])
-        this.UPDATE_SELECTED(['html', val.html])
+        this.edit(['markdown', val.markdown])
+        this.edit(['html', val.html])
       }
     },
   },

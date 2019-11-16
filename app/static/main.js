@@ -2,34 +2,11 @@ import router from './router.js'
 import store from './store/store.js'
 import App from './app.js'
 
+import { recursivelyCasify, snakeCasify, camelCaseify } from './util.js'
+
 const $api = axios.create({
   baseURL: '/api',
 })
-
-
-function snakeCasify(key) {
-  return key.replace(/[A-Z]/g, match => '_' + match.toLowerCase())
-}
-
-function camelCaseify(key) {
-  return key.replace(/_\w{1}/g, (match, i, str) => str[i + 1].toUpperCase())
-}
-
-function recursivelyCasify(obj, accum, casifier) {
-  Object.keys(obj).forEach(key => {
-    const val = obj[key]
-    if (Array.isArray(val)) {
-      // assuming no directly nested lists/arrays and all list/array items 
-      // will be dicts/objects
-      accum[casifier(key)] = val.map(x => recursivelyCasify(x, {}, casifier))
-    } else if (val && typeof val === 'object') {
-      accum[casifier(key)] = recursivelyCasify(val, {}, casifier)
-    } else {
-      accum[casifier(key)] = obj[key]
-    }
-  })
-  return accum
-}
 
 
 $api.interceptors.response.use(res => {

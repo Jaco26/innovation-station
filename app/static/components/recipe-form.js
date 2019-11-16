@@ -7,6 +7,11 @@ export default {
       type: String,
       default: 'Submit'
     },
+
+    messages: {
+      type: Array,
+      default: () => []
+    },
     title: String,
     description: String,
     markdown: String,
@@ -15,20 +20,22 @@ export default {
   methods: {
     processMarkdown(input) {
       return input.split('\n').reduce((accum, line, i, lines) => {
+        line = line.trim()
 
         line = line.replace(/</g, '&lt;')
         line = line.replace(/>/g, '&gt;')
 
         // Create unordered list tags
-        if (line.startsWith('-')) {
+        // if (line.startsWith('-') || line.startsWith('•')) {
+        if (/^-|^•/.test(line)) {
           const prev = lines[i - 1]
           const next = lines[i + 1]
     
           line = `<li>${line.slice(1).trim()}</li>`
     
-          if (!prev || !prev.startsWith('-'))
+          if (!prev || !/^-|^•/.test(prev))
             line = `<ul>${line}`
-          else if (!next || !next.startsWith('-'))
+          else if (!next || !/^-|^•/.test(next))
             line = `${line}</ul>`
         }
     
@@ -57,7 +64,7 @@ export default {
   `<div>
     <h4 v-if="label">{{label}}</h4>
     <form @submit.prevent="$emit('submit')">
-      <template v-for="(msg, i) in $store.state.recipe.messages">
+      <template v-for="(msg, i) in messages">
         <p :key="i" class="alert alert-warning">{{msg}}</p>
       </template>
       <div class="form-group">
@@ -93,7 +100,7 @@ export default {
         ></textarea>
       </div>
       <div class="form-group">
-        <button class="btn btn-primary" id="submit-recipe" type="submit">{{ actionText }}</button>
+        <slot name="actions" />
       </div>
     </form>
   </div>`,

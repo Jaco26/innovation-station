@@ -29,21 +29,20 @@ export default {
   methods: {
     onCopy() {
       let content = this.recipe.html
-      content = content.replace(/<li>(.*?)<\/li>/g, (li, liContent) => `• ${liContent}\n`)
+      content = content.replace(/<li>(.*?)<\/li>/g, (liMatch, liContent) => `• ${liContent}\n`)
       content = content.replace(/<\/?.*>/g, '')
 
-      
       const ta = document.createElement('textarea')
       ta.value = content
-      ta.setAttribute('readonly', '') // make tamper-resistant
+      ta.setAttribute('readonly', '') // make tamper-resistant (ok sure...)
 
       ta.style.position = 'absolute' // position texarea offscreen (even though it will likely be removed too fast to see it anyway...)
       ta.style.left = '-9999px' 
       
       document.body.appendChild(ta)
 
-      const prevSelected = document.getSelection().rangeCount > 0 // cache preciously selected text if there is any
-        ? document.getSelection().getRangeAt(0)
+      const prevSelected = document.getSelection().rangeCount > 0
+        ? document.getSelection().getRangeAt(0) // cache preciously selected text if there is any
         : false
 
       ta.select()
@@ -51,7 +50,7 @@ export default {
       document.execCommand('copy') // this only copies the value of the textarea (don't know why...)
       document.body.removeChild(ta)
 
-      if (prevSelected) { // reselect previoulsy selected ranges
+      if (prevSelected) { // reselect previoulsy selected range
         document.getSelection().removeAllRanges()
         document.getSelection().addRange(prevSelected)
       }

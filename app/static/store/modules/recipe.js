@@ -1,5 +1,14 @@
 
-import { createRecipeItem, createRecipeState } from '../util.js'
+import { createRecipeItem } from '/static/util.js/index.js'
+
+function createRecipeState() {
+  return {
+    busy: false,
+    errors: [],
+    messages: [],
+    item: createRecipeItem()
+  }
+}
 
 export default {
   namespaced: true,
@@ -15,13 +24,17 @@ export default {
         state[key] = val
       }
     },
-    SET_RECIPE(state, [key, val]) {
+    SET_RECIPE_VAL(state, [key, val]) {
       if (state.item[key] !== undefined) {
         state.item[key] = val
       }
     }
   },
   actions: {
+    SELECT_RECIPE({ commit, rootState }, recipeId) {
+      commit('RESET')
+      commit('SET', ['item', rootState.recipes[recipeId]])
+    },
     async ADD_RECIPE({ commit, dispatch, state, rootState }) {
       try {
         commit('SET', ['busy', true])

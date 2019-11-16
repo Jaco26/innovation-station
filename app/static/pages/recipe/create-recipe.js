@@ -7,43 +7,48 @@ export default {
     RecipeForm,
     RecipeDisplay
   },
+  methods: {
+    ...Vuex.mapMutations('newRecipe', ['SET']),
+  },
+  computed: {
+    title: {
+      get() { return this.$store.state.newRecipe.title },
+      set(val) { this.SET(['title', val]) }
+    },
+    description: {
+      get() { return this.$store.state.newRecipe.description },
+      set(val) { this.SET(['description', val]) }
+    },
+    markdown: {
+      get() { return this.$store.state.newRecipe.markdown },
+      set(val) {
+        this.SET(['markdown', val.markdown])
+        this.SET(['html', val.html])
+      }
+    },
+  },
   template: //html
   `<div class="row">
     <div class="col-md-6">
-      <RecipeForm
+      <recipe-form
         label="Add a new recipe"
         :title.sync="title"
         :description.sync="description"
         :markdown.sync="markdown"
-        @submit="$store.dispatch('recipe/ADD_RECIPE')"
-      />
+        @submit="$store.dispatch('newRecipe/ADD_RECIPE')"
+      >
+        <template v-slot:actions>
+          <button class="btn btn-primary" id="submit-recipe" type="submit">Submit</button>
+
+        </template>
+      </recipe-form>
     </div>
     <div class="col-md-6">
       <RecipeDisplay
         isPreview
-        :recipe="$store.state.recipe.item"
+        :recipe="$store.state.newRecipe"
       />
     </div>
   </div>`,
-  methods: {
-    ...Vuex.mapMutations('recipe', ['SET_RECIPE']),
-  },
-  computed: {
-    title: {
-      get() { return this.$store.state.recipe.item.title },
-      set(val) { this.SET_RECIPE(['title', val]) }
-    },
-    description: {
-      get() { return this.$store.state.recipe.item.description },
-      set(val) { this.SET_RECIPE(['description', val]) }
-    },
-    markdown: {
-      get() { return this.$store.state.recipe.item.markdown },
-      set(val) {
-        this.SET_RECIPE(['markdown', val.markdown])
-        this.SET_RECIPE(['html', val.html])
-      }
-    },
-  },
 }
 
