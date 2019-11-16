@@ -9,6 +9,12 @@ export default {
   },
   methods: {
     ...Vuex.mapMutations('newRecipe', ['SET']),
+    async onSubmit() {
+      await this.$store.dispatch('newRecipe/ADD_RECIPE')
+      if (!this.$store.state.errors.add_recipe.length) {
+        this.$router.push('/')
+      }
+    },
   },
   computed: {
     title: {
@@ -35,11 +41,10 @@ export default {
         :title.sync="title"
         :description.sync="description"
         :markdown.sync="markdown"
-        @submit="$store.dispatch('newRecipe/ADD_RECIPE')"
+        @submit="onSubmit"
       >
         <template v-slot:actions>
           <button class="btn btn-primary" id="submit-recipe" type="submit">Submit</button>
-
         </template>
       </recipe-form>
     </div>

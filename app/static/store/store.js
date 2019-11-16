@@ -9,9 +9,24 @@ export default new Vuex.Store({
     editableRecipe,
   },
   state: {
-    errors: {},
-    messages: {},
-    busy: {},
+    errors: {
+      fetch_recipes: [],
+      add_recipe: [],
+      update_recipe: [],
+      delete_recipe: [],
+    },
+    messages: {
+      fetch_recipes: [],
+      add_recipe: [],
+      update_recipe: [],
+      delete_recipe: [],
+    },
+    busy: {
+      fetch_recipes: false,
+      add_recipe: false,
+      update_recipe: false,
+      delete_recipe: false,
+    },
   },
   mutations: {
     SET_BUSY(state, [actionName, isBusy]) {

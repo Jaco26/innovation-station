@@ -7,24 +7,6 @@ export default {
     RecipeForm,
     RecipeDisplay,
   },
-  template: //html
-  `<div class="row">
-    <div :class="{ 'col-md-6' : editing }">
-      <RecipeForm
-        v-if="editing"
-        label="Edit this recipe"
-        actionText="Save Edits"
-        :title.sync="title"
-        :description.sync="description"
-        :markdown.sync="markdown"
-        @submit="$store.dispatch('recipe/UPDATE_RECIPE')"
-      />
-    </div>
-    <div class="col" :class="{ 'col-md-6' : editing }">
-      <button class="btn" :class="editing ? 'btn-primary' : 'btn-light'" @click="toggleEdit">{{ editing ? 'Save Edits' : 'edit'}}</button>
-      <RecipeDisplay :recipe="$store.state.editableRecipe" />
-    </div>
-  </div>`,
   data() {
     return {
       editing: false
@@ -39,14 +21,17 @@ export default {
         await this.$store.dispatch('recipe/UPDATE_RECIPE')
         this.$nextTick(() => {
           if (!this.$store.state.recipe.messages.length) {
-            console.log(this.$store.state.recipe.messages)
             this.editing = false
           }
         })
       } else {
         this.editing = true
       }
-    }
+    },
+    cancelEdit() {
+      this.editing = false
+      this.$store.commit('editableRecipe/HYDRATE', this.$store.getters['recipes/selected'])
+    },
   },
   computed: {
     title: {
@@ -65,4 +50,31 @@ export default {
       }
     },
   },
+  template: //html
+  `<div class="row">
+    <div :class="{ 'col-md-6' : editing }">
+      <recipe-form
+        v-if="editing"
+        label="Edit this recipe"
+        :messages="$store.state.messages.update_recipe"
+        :title.sync="title"
+        :description.sync="description"
+        :markdown.sync="markdown"
+        @submit="$store.dispatch('editableRecipe/UPDATE_RECIPE')"
+      >
+        <template v-slot:actions>
+          <button v-if="editing" class="btn btn-light" @click="cancelEdit">Cancel</button>
+          <button class="btn btn-primary" type="submit">Save Edits</button>
+        </template>
+      </recipe-form>
+    </div>
+    <div class="col" :class="{ 'col-md-6' : editing }">
+      <RecipeDisplay
+        :isPreview="editing"
+        :editing="editing"
+        :recipe="$store.state.editableRecipe"
+        @toggleEdit="toggleEdit"
+      />
+    </div>
+  </div>`,
 }

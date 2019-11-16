@@ -3,10 +3,6 @@ export default {
   name: 'TheRecipeForm',
   props: {
     label: String,
-    actionText: {
-      type: String,
-      default: 'Submit'
-    },
 
     messages: {
       type: Array,
@@ -26,7 +22,6 @@ export default {
         line = line.replace(/>/g, '&gt;')
 
         // Create unordered list tags
-        // if (line.startsWith('-') || line.startsWith('•')) {
         if (/^-|^•/.test(line)) {
           const prev = lines[i - 1]
           const next = lines[i + 1]
@@ -63,7 +58,7 @@ export default {
   template: // html
   `<div>
     <h4 v-if="label">{{label}}</h4>
-    <form @submit.prevent="$emit('submit')">
+    <form @submit.prevent.native="$emit('submit')">
       <template v-for="(msg, i) in messages">
         <p :key="i" class="alert alert-warning">{{msg}}</p>
       </template>
@@ -100,7 +95,9 @@ export default {
         ></textarea>
       </div>
       <div class="form-group">
-        <slot name="actions" />
+        <div class="d-flex justify-content-end">
+          <slot name="actions" />
+        </div>
       </div>
     </form>
   </div>`,

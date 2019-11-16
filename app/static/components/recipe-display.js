@@ -13,7 +13,8 @@ export default {
       <div v-if="isPreview">
         <h6 class="card-title text-muted">Recipe Preview</h6>
       </div>
-      <div v-else>
+      <div v-else >
+        <button class="btn btn-light" @click="$emit('toggleEdit')">Edit</button>
         <button class="btn btn-light" @click="onCopy">Copy to clipboard</button>
       </div>
       <div class="card-text">
@@ -58,3 +59,6 @@ export default {
     },
   }
 }
+
+
+// <button class="btn" :class="editing ? 'btn-primary' : 'btn-light'" @click="$emit('toggleEdit')">{{ editing ? 'Save Edits' : 'edit'}}</button>
