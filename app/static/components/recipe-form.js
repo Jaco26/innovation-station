@@ -47,6 +47,11 @@ export default {
           return x
         })
 
+        // create anchors
+        line = line.replace(/(\[.*\])\((https?:\/\/.*)\)/g, (x, text, href) => (
+          `<a href="${href}">${text.slice(1, -1).trim()}</a>`
+        ))
+
         // shortcuts
         line = line.replace(/{ing}|:ing/gi, 'Ingredients')
         line = line.replace(/{ins}|:ins/gi, 'Instructions')
@@ -58,7 +63,7 @@ export default {
   template: // html
   `<div>
     <h4 v-if="label">{{label}}</h4>
-    <form @submit.prevent.native="$emit('submit')">
+    <form @submit.prevent="$emit('submit')">
       <template v-for="(msg, i) in messages">
         <p :key="i" class="alert alert-warning">{{msg}}</p>
       </template>

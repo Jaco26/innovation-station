@@ -28,7 +28,11 @@ export default {
         this.editing = true
       }
     },
-    cancelEdit() {
+    onSubmit() {
+      this.$store.dispatch('editableRecipe/UPDATE_RECIPE')
+    },
+    onCancel() {
+      console.log('canceling edit')
       this.editing = false
       this.$store.commit('editableRecipe/HYDRATE', this.$store.getters['recipes/selected'])
     },
@@ -60,11 +64,11 @@ export default {
         :title.sync="title"
         :description.sync="description"
         :markdown.sync="markdown"
-        @submit="$store.dispatch('editableRecipe/UPDATE_RECIPE')"
+        @submit="onSubmit"
       >
         <template v-slot:actions>
-          <button v-if="editing" class="btn btn-light" @click="cancelEdit">Cancel</button>
-          <button class="btn btn-primary" type="submit">Save Edits</button>
+          <button type="button" class="btn btn-light" @click="onCancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submits</button>
         </template>
       </recipe-form>
     </div>

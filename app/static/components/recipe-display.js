@@ -1,7 +1,7 @@
 
 
 export default {
-  name: 'RecipeView',
+  name: 'RecipeDisplay',
   props: {
     isPreview: Boolean,
     editing: Boolean,
