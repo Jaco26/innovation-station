@@ -11,6 +11,9 @@ export default {
     },
     SET(state, [key, val]) {
       if (state[key] !== undefined) {
+        if (key === 'title') {
+          state.uniqueTitle = val.replace(/\s/g, '-').toLowerCase()
+        }
         state[key] = val
       }
     },

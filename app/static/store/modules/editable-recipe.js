@@ -1,4 +1,4 @@
-import { createRecipeItem } from '/static/util.js'
+import { createRecipeItem } from '../../util.js'
 
 export default {
   namespaced: true,
@@ -6,6 +6,9 @@ export default {
   mutations: {
     SET(state, [key, val]) {
       if (state[key] !== undefined) {
+        if (key === 'title') {
+          state.uniqueTitle = val.replace(/\s/g, '-').toLowerCase()
+        }
         state[key] = val
       }
     },

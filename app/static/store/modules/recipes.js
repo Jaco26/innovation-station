@@ -72,6 +72,6 @@ export default {
         rv = selected
       }
       return rv
-    }
+    },
   }
 }

@@ -48,28 +48,31 @@ def recipe(id=''):
       id = uuid.uuid4().hex
       date_created = datetime.utcnow()
       title = body.get('title')
-      print(title)
-      unique_title = re.sub(r'\s+', '-', title.lower())
-      print(unique_title)
+      unique_title = body.get('unique_title')
       description = body.get('description')
       markdown = body.get('markdown')
       html = body.get('html')
 
-      sql = '''INSERT INTO recipe (
-                id,
-                date_created,
-                title,
-                unique_title,
-                description,
-                markdown,
-                html
-              ) VALUES (?,?,?,?,?,?,?)
-            '''
+      query1 = db.execute('SELECT * FROM recipe WHERE unique_title = ?', [unique_title])
+      exists =  query1.fetchone()
+      if exists:
+        res.messages.append('There is already a recipe called "{}". Please choose another title'.format(title))
+      else:
+        query2 = '''INSERT INTO recipe (
+                  id,
+                  date_created,
+                  title,
+                  unique_title,
+                  description,
+                  markdown,
+                  html
+                ) VALUES (?,?,?,?,?,?,?)
+              '''
 
-      db.execute(sql, (id, date_created, title, unique_title, description, markdown, html))
-      db.commit()
+        db.execute(query2, (id, date_created, title, unique_title, description, markdown, html))
+        db.commit()
 
-      res.data = id
+        res.data = id
 
       return jsonify(res.json()), 201
 
@@ -77,7 +80,7 @@ def recipe(id=''):
       body = request.get_json()
 
       title = body.get('title')
-      unique_title = re.sub(r'\s+', '-', title.lower())
+      unique_title = body.get('unique_title')
       description = body.get('description')
       markdown = body.get('markdown')
       html = body.get('html')
@@ -91,6 +94,7 @@ def recipe(id=''):
         UPDATE recipe SET 
           date_updated=:date_updated,
           title=:title,
+          unique_title=:unique_title,
           description=:description,
           markdown=:markdown,
           html=:html
