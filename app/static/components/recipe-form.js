@@ -12,7 +12,14 @@ export default {
     description: String,
     markdown: String,
   },
-  
+  computed: {
+    dirty() {
+      const selected = this.$store.getters['recipes/selected']
+      return this.title !== selected.title ||
+        this.description !== selected.description ||
+        this.markdown !== selected.markdown
+    }
+  },
   methods: {
     processMarkdown(input) {
       return input.split('\n').reduce((accum, line, i, lines) => {
@@ -101,10 +108,9 @@ export default {
       </div>
       <div class="form-group">
         <div class="d-flex justify-content-end">
-          <slot name="actions" />
+          <slot name="actions" v-bind="{ dirty }" />
         </div>
       </div>
     </form>
   </div>`,
 }
-

@@ -69,6 +69,7 @@ export default {
       let rv = createRecipeItem()
       const selected = state.indexedById[state.selectedRecipeId]
       if (selected) {
+        console.log('new selected')
         rv = selected
       }
       return rv

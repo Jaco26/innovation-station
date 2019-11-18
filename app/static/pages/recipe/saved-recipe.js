@@ -9,7 +9,8 @@ export default {
   },
   data() {
     return {
-      editing: false
+      editing: false,
+      submitSuccess: false,
     }
   },
   methods: {
@@ -28,11 +29,13 @@ export default {
         this.editing = true
       }
     },
-    onSubmit() {
-      this.$store.dispatch('editableRecipe/UPDATE_RECIPE')
+    async onSubmit() {
+      await this.$store.dispatch('editableRecipe/UPDATE_RECIPE')
+      if (!this.$store.state.messages.update_recipe.length) {
+        this.submitSuccess = true
+      }
     },
     onCancel() {
-      console.log('canceling edit')
       this.editing = false
       this.$store.commit('editableRecipe/HYDRATE', this.$store.getters['recipes/selected'])
     },
@@ -56,6 +59,13 @@ export default {
   },
   template: //html
   `<div class="row">
+
+    <j-toast :closeAfter="1500" :show.sync="submitSuccess">
+      <div class="d-flex flex-grow-1 justify-content-center">
+        Success
+      </div>
+    </j-toast>
+
     <div :class="{ 'col-md-6' : editing }">
       <recipe-form
         v-if="editing"
@@ -66,9 +76,16 @@ export default {
         :markdown.sync="markdown"
         @submit="onSubmit"
       >
-        <template v-slot:actions>
-          <button type="button" class="btn btn-light" @click="onCancel">Cancel</button>
-          <button type="submit" class="btn btn-primary">Submits</button>
+        <template v-slot:actions="{ dirty }">
+          <j-btn kind="light" @click="onCancel">Cancel</j-btn>
+          <j-btn
+            class="ml-2"
+            type="submit"
+            :disabled="!dirty"
+            :busy="$store.state.busy.update_recipe"
+          >
+            Save
+          </j-btn>
         </template>
       </recipe-form>
     </div>

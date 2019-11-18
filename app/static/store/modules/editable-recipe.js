@@ -21,12 +21,12 @@ export default {
     }
   },
   actions: {
-    async UPDATE_RECIPE({ commit, state }) {
-      console.log('updating recipe', { ...state })
+    async UPDATE_RECIPE({ commit, state, rootGetters }) {
       try {
         commit('SET_BUSY', ['update_recipe', true], { root: true })
         const res = await this.$api.put(`/recipe/${state.id}`, state)
         commit('UPDATE_MESSAGES', ['update_recipe', res.messages], { root: true })
+        // commit('recipes/UPDATE_RECIPE_COLLECTION', state, { root: true }) // TODO, need to refactor res.messages to be catches
       } catch (error) {
         commit('UPDATE_ERRORS', ['update_recipe', error.message], { root: true })
       } finally {
@@ -34,4 +34,12 @@ export default {
       }
     }
   }
+}
+
+async function delay(duration) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve()
+    }, duration)
+  })
 }

@@ -14,3 +14,18 @@ a:hover {
   color: #0495ca;
   text-decoration: underline;
 }
+
+.toast {
+  opacity: 1;
+}
+
+
+/* Transitions */
+
+.j-toast-enter-active, .j-toast-leave-active {
+  transition: all .3s ease;
+}
+.j-toast-enter, .j-toast-leave-to {
+  transform: translateY(10px);
+  opacity: 0;
+}

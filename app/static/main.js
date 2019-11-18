@@ -4,6 +4,15 @@ import App from './app.js'
 
 import { recursivelyCasify, snakeCasify, camelCaseify } from './util.js'
 
+// global components
+import JBtn from './components/j-btn.js'
+import JToast from './components/j-toast.js'
+
+
+Vue.component('j-btn', JBtn)
+Vue.component('j-toast', JToast)
+
+
 const $api = axios.create({
   baseURL: '/api',
 })

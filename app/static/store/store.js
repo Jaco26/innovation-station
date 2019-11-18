@@ -30,7 +30,7 @@ export default new Vuex.Store({
   },
   mutations: {
     SET_BUSY(state, [actionName, isBusy]) {
-      state.busy[actionName] = isBusy
+      state.busy[actionName] = !!isBusy
     },
     UPDATE_ERRORS(state, [actionName, error]) {
       if (!state.errors[actionName]) {
