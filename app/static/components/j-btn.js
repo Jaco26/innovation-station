@@ -11,16 +11,6 @@ export default {
     }
   },
   render(h, ctx) {
-    let children
-
-    if (ctx.props.busy) {
-      children = [
-        h('span', { class: 'spinner-border', attrs: { role: 'status' } })
-      ]
-    } else {
-      children = ctx.children
-    }
-
     return h('button',
       {
         ...ctx.data,
@@ -30,7 +20,7 @@ export default {
         },
         class: `btn btn-${ctx.props.kind}`,
       },
-      children
+      ctx.props.busy ? [h('span', { class: 'spinner-border', attrs: { role: 'status' } })] : ctx.children
     )
   }
 }

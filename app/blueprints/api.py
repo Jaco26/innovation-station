@@ -72,7 +72,7 @@ def recipe(id=''):
         db.execute(query2, (id, date_created, title, unique_title, description, markdown, html))
         db.commit()
 
-        res.data = id
+        res.data = dict(id=id, date_created=date_created)
 
       return jsonify(res.json()), 201
 
