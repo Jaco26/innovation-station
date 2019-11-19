@@ -2,6 +2,7 @@
 
 export default {
   name: 'j-btn',
+  functional: true,
   props: {
     busy: Boolean,
     kind: {
@@ -9,16 +10,24 @@ export default {
       default: 'primary'
     }
   },
-  template: //html
-  `<button v-on="$listeners" v-bind="$attrs" type="button" :disabled="busy" class="btn" :class="btnClass">
-    <span v-if="busy" class="spinner-border" role="status"></span>
-    <span v-else>
-      <slot />
-    </span>
-  </button>`,
-  computed: {
-    btnClass() {
-      return this.kind ? `btn-${this.kind}` : ''
+  render(h, ctx) {
+    let children
+
+    if (ctx.props.busy) {
+      children = [
+        h('span', { class: 'spinner-border', attrs: { role: 'status' } })
+      ]
+    } else {
+      children = ctx.children
     }
+
+    return h('button',
+      {
+        ...ctx.data,
+        attrs: { type: ctx.data.attrs.type || 'button' },
+        class: `btn btn-${ctx.props.kind}`,
+      },
+      children
+    )
   }
 }

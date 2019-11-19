@@ -78,14 +78,7 @@ export default {
       >
         <template v-slot:actions="{ dirty }">
           <j-btn kind="light" @click="onCancel">Cancel</j-btn>
-          <j-btn
-            class="ml-2"
-            type="submit"
-            :disabled="!dirty"
-            :busy="$store.state.busy.update_recipe"
-          >
-            Save
-          </j-btn>
+          <j-btn :disabled="!dirty" class="ml-2" type="submit" :busy="$store.state.busy.update_recipe">Save</j-btn>
         </template>
       </recipe-form>
     </div>

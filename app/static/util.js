@@ -1,6 +1,8 @@
 export function createRecipeItem() {
   return {
     id: '',
+    dateCreated: '',
+    dateUpdated: '',
     title: '',
     uniqueTitle: '',
     description: '',

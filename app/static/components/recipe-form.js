@@ -15,9 +15,9 @@ export default {
   computed: {
     dirty() {
       const selected = this.$store.getters['recipes/selected']
-      return this.title !== selected.title ||
-        this.description !== selected.description ||
-        this.markdown !== selected.markdown
+      return this.title.slice() !== selected.title.slice() ||
+        this.description.slice() !== selected.description.slice() ||
+        this.markdown.slice() !== selected.markdown.slice()
     }
   },
   methods: {

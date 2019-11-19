@@ -26,7 +26,7 @@ export default {
   </div>`,
   mounted() {
     this.$store.dispatch('recipes/FETCH_RECIPES')
-    this.$store.watch((s, g) => g['recipes/selected'],
+    this.$store.watch((state, getters) => getters['recipes/selected'],
       selectedRecipe => {
         this.$store.commit('editableRecipe/HYDRATE', selectedRecipe)
       }
