@@ -1,19 +1,14 @@
+import os
 import uuid
-import re
 from sqlite3 import Error as SQLError
 from datetime import datetime
-from flask import Blueprint, request, jsonify, abort
+from flask import Blueprint, request, jsonify, abort, current_app
+from werkzeug.exceptions import NotFound
 from app.db import get_db
+from app.api_flask import ApiResponse
+# from app.custom_error_handler import CustomErrorHandler
 
 api = Blueprint('api', __name__)
-
-class ApiResponse:
-  def __init__(self):
-    self.data = None
-    self.messages = []
-
-  def json(self):
-    return dict(data=self.data, messages=self.messages)
 
 @api.route('/recipes')
 def recipes():
@@ -22,10 +17,12 @@ def recipes():
     db = get_db()
     query = db.execute('SELECT * FROM recipe')
     res.data = [dict(row) for row in query.fetchall()]
-    return jsonify(res.json())
+    return res
   except BaseException as e:
-    print(e)
-    abort(500)
+    res.status = 500
+    if current_app.config['ENV'] == 'development':
+      res.message = str(e)
+    return res
 
 
 @api.route('/recipe', methods=['POST'])
@@ -39,8 +36,7 @@ def recipe(id=''):
     if request.method == 'GET':
       sql = 'SELECT * FROM recipe WHERE id = ?'
       res.data = db.execute(sql, (id,)).fetchone()
-
-      return jsonify(res.json())
+      return res
 
     elif request.method == 'POST':
       body = request.get_json()
@@ -56,7 +52,9 @@ def recipe(id=''):
       query1 = db.execute('SELECT * FROM recipe WHERE unique_title = ?', [unique_title])
       exists =  query1.fetchone()
       if exists:
-        res.messages.append('There is already a recipe called "{}". Please choose another title'.format(title))
+        res.message = 'There is already a recipe called "{}". Please choose another title'.format(title)
+        res.status = 400
+        return res
       else:
         query2 = '''INSERT INTO recipe (
                   id,
@@ -73,8 +71,9 @@ def recipe(id=''):
         db.commit()
 
         res.data = dict(id=id, date_created=date_created)
+        res.status = 201
 
-      return jsonify(res.json()), 201
+      return res
 
     elif request.method == 'PUT':
       body = request.get_json()
@@ -88,7 +87,9 @@ def recipe(id=''):
       query1 = db.execute('SELECT * FROM recipe WHERE unique_title = ? AND id != ?', [unique_title, id])
       exists =  query1.fetchone()
       if exists:
-        res.messages.append('There is already a recipe called "{}". Please choose another title'.format(title))
+        res.message = 'There is already a recipe called "{}". Please choose another title'.format(title)
+        res.status = 400
+        return res
       else:
         query2 = '''
         UPDATE recipe SET 
@@ -111,12 +112,12 @@ def recipe(id=''):
         })
         db.commit()
 
-      return jsonify(res.json())
+      return res
 
     elif request.method == 'DELETE':
       db.execute('DELETE FROM recipe WHERE id=?', (id,))
 
-      return jsonify(res.json())
+      return res
 
   except:
     abort(500)

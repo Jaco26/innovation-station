@@ -28,10 +28,13 @@ export default {
       try {
         commit('TRIM_STATE')
         commit('SET_BUSY', ['add_recipe', true], { root: true })
+        commit('CLEAR_MESSAGES', 'add_recipe', { root: true })
         const res = await this.$api.post('/recipe', state)
         commit('recipes/UPDATE_RECIPE_COLLECTION', { ...state, ...res.data }, { root: true })
-        commit('UPDATE_MESSAGES', ['add_recipe', res.messages], { root: true })
       } catch (error) {
+        if (error.response && error.response.data.message) {
+          commit('UPDATE_MESSAGES', ['add_recipe', error.response.data.message], { root: true })
+        }
         commit('UPDATE_ERRORS', ['add_recipe', error.message], { root: true })
       } finally {
         commit('SET_BUSY', ['add_recipe', true], { root: true })

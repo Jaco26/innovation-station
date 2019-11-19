@@ -38,11 +38,14 @@ export default new Vuex.Store({
       }
       state.errors[actionName].push(error)
     },
-    UPDATE_MESSAGES(state, [actionName, messages]) {
+    UPDATE_MESSAGES(state, [actionName, message]) {
       if (!state.errors[actionName]) {
         state.messages[actionName] = []
       }
-      state.messages[actionName].push(...messages)
+      state.messages[actionName].push(message)
+    },
+    CLEAR_MESSAGES(state, key) {
+      state.messages[key] = []
     }
   },
 })

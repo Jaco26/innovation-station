@@ -38,12 +38,13 @@ export default {
     async FETCH_RECIPES({ commit, state }) {
       try {
         commit('SET_BUSY', ['fetch_recipes', true], { root: true })
-        const query = encodeQueryString(state.query)
-        const res = await this.$api.get('/recipes' + query)
+        const res = await this.$api.get('/recipes')
         commit('UPDATE_RECIPE_COLLECTION', res.data)
-        commit('UPDATE_MESSAGES', ['fetch_recipes', res.messages], { root: true })
       } catch (error) {
-        commit('UPDATE_ERRORS', ['fetch_recipes', error.message])
+        if (error.response && error.response.data.message) {
+          commit('UPDATE_MESSAGES', ['fetch_recipes', error.response.data.message], { root: true })
+        }
+        commit('UPDATE_ERRORS', ['fetch_recipes', error.message], { root: true })
       } finally {
         commit('SET_BUSY', ['fetch_recipes', false], { root: true })
       }

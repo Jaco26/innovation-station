@@ -26,17 +26,22 @@ export default {
     }
   },
   actions: {
-    async UPDATE_RECIPE({ commit, state, rootGetters }) {
+    async UPDATE_RECIPE({ commit, state }) {
       try {
         commit('TRIM_STATE')
         commit('SET_BUSY', ['update_recipe', true], { root: true })
-        const res = await this.$api.put(`/recipe/${state.id}`, state)
-        commit('UPDATE_MESSAGES', ['update_recipe', res.messages], { root: true })
-        commit('recipes/UPDATE_RECIPE_COLLECTION', { ...state }, { root: true }) // TODO, need to refactor res.messages to be catches
+        commit('CLEAR_MESSAGES', 'update_recipe', { root: true })
+        await this.$api.put(`/recipe/${state.id}`, state)
+        commit('recipes/UPDATE_RECIPE_COLLECTION', { ...state }, { root: true })
+        commit('SET_SUCCESS', 'update_recipe', { root: true })
       } catch (error) {
+        if (error.response && error.response.data.message) {
+          commit('UPDATE_MESSAGES', ['update_recipe', error.response.data.message], { root: true })
+        }
         commit('UPDATE_ERRORS', ['update_recipe', error.message], { root: true })
       } finally {
         commit('SET_BUSY', ['update_recipe', false], { root: true })
+
       }
     }
   }
