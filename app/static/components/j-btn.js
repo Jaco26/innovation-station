@@ -24,7 +24,10 @@ export default {
     return h('button',
       {
         ...ctx.data,
-        attrs: { type: ctx.data.attrs.type || 'button' },
+        attrs: {
+          type: ctx.data.attrs.type || 'button',
+          disabled: ctx.props.busy || ctx.data.attrs.disabled,
+        },
         class: `btn btn-${ctx.props.kind}`,
       },
       children
