@@ -33,6 +33,14 @@ export default {
         state.indexedById = { ...state.indexedById, [recipe.id]: recipe }
       }
     },
+    REMOVE_RECIPE_FROM_COLLECTION(state, recipeId) {
+      state.indexedById = Object.values(state.indexedById).reduce((acc, r) => {
+        if (r.id !== recipeId) {
+          acc[r.id] = r
+        }
+        return acc
+      }, {})
+    }
   },
   actions: {
     async FETCH_RECIPES({ commit, state }) {

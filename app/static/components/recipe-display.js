@@ -13,9 +13,14 @@ export default {
       <div v-if="isPreview">
         <h6 class="card-title text-muted">Recipe Preview</h6>
       </div>
-      <div v-else >
-        <button class="btn btn-light" @click="$emit('toggleEdit')">Edit</button>
-        <button class="btn btn-light" @click="onCopy">Copy to clipboard</button>
+      <div v-else class="d-flex justify-content-between">
+        <div>
+          <button class="btn btn-light" @click="$emit('toggleEdit')">Edit</button>
+          <button class="btn btn-light" @click="onCopy">Copy to clipboard</button> 
+        </div>
+        <div>
+          <j-btn kind="danger" @click="onDelete">Delete</j-btn>
+        </div>
       </div>
       <div class="card-text">
         <small v-if="isPreview && recipe.title" class="text-muted">(title)</small>
@@ -28,6 +33,12 @@ export default {
     </div>
   </div>`,
   methods: {
+    async onDelete() {
+      await this.$store.dispatch('editableRecipe/DELETE_RECIPE')
+      if (!this.$store.state.messages.delete_recipe.length) {
+        this.$router.push('/')
+      }
+    },
     onCopy() {
       let content = this.recipe.html
       content = content.replace(/<li>(.*?)<\/li>/g, (liMatch, liContent) => `• ${liContent}\n`)

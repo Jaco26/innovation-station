@@ -116,8 +116,11 @@ def recipe(id=''):
 
     elif request.method == 'DELETE':
       db.execute('DELETE FROM recipe WHERE id=?', (id,))
-
+      db.commit()
       return res
 
-  except:
-    abort(500)
+  except BaseException as e:
+    res.status = 500
+    if current_app.config['ENV'] == 'development':
+      res.message = str(e)
+    return res

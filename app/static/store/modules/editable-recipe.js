@@ -33,7 +33,6 @@ export default {
         commit('CLEAR_MESSAGES', 'update_recipe', { root: true })
         await this.$api.put(`/recipe/${state.id}`, state)
         commit('recipes/UPDATE_RECIPE_COLLECTION', { ...state }, { root: true })
-        commit('SET_SUCCESS', 'update_recipe', { root: true })
       } catch (error) {
         if (error.response && error.response.data.message) {
           commit('UPDATE_MESSAGES', ['update_recipe', error.response.data.message], { root: true })
@@ -42,6 +41,21 @@ export default {
       } finally {
         commit('SET_BUSY', ['update_recipe', false], { root: true })
 
+      }
+    },
+    async DELETE_RECIPE({ commit, state }) {
+      try {
+        commit('SET_BUSY', ['delete_recipe', true], { root: true })
+        commit('CLEAR_MESSAGES', 'delete_recipe', { root: true })
+        await this.$api.delete(`/recipe/${state.id}`)
+        commit('recipes/REMOVE_RECIPE_FROM_COLLECTION', state.id, { root: true })
+      } catch (error) {
+        if (error.response && error.response.data.message) {
+          commit('UPDATE_MESSAGES', ['delete_recipe', error.response.data.message], { root: true })
+        }
+        commit('UPDATE_ERRORS', ['delete_recipe', error.message], { root: true })
+      } finally {
+        commit('SET_BUSY', ['delete_recipe', false], { root: true })
       }
     }
   }
