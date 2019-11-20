@@ -10,18 +10,21 @@ export default {
   template: //html
   `<div class="card">
     <div class="card-body">
-      <div v-if="isPreview">
-        <h6 class="card-title text-muted">Recipe Preview</h6>
-      </div>
-      <div v-else class="d-flex justify-content-between">
-        <div>
-          <j-btn outline color="info" @click="$emit('toggleEdit')">Edit &#9998;</j-btn>
-          <j-btn outline color="dark" @click="onCopy">Copy to clipboard &#8629;</j-btn>
+      <div class="btn-toolbar">
+        <div v-if="isPreview">
+          <h6 class="card-title text-muted">Recipe Preview</h6>
         </div>
-        <div>
-          <j-btn outline color="danger" @click="onDelete">Delete &#9888;</j-btn>
+        <div v-else class="d-flex flex-grow-1 justify-content-between">
+          <div>
+            <j-btn outline size="sm" color="info" @click="$emit('toggleEdit')">Edit &#9998;</j-btn>
+            <j-btn outline size="sm" color="dark" @click="onCopy">Copy to clipboard &#8629;</j-btn>
+          </div>
+          <div>
+            <j-btn outline size="sm" color="danger" @click="onDelete">Delete &#9888;</j-btn>
+          </div>
         </div>
       </div>
+
       <div class="card-text">
         <small v-if="isPreview && recipe.title" class="text-muted">(title)</small>
         <h1>{{recipe.title}}</h1>
