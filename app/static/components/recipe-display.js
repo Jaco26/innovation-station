@@ -15,11 +15,11 @@ export default {
       </div>
       <div v-else class="d-flex justify-content-between">
         <div>
-          <button class="btn btn-light" @click="$emit('toggleEdit')">Edit</button>
-          <button class="btn btn-light" @click="onCopy">Copy to clipboard</button> 
+          <j-btn outline color="info" @click="$emit('toggleEdit')">Edit &#9998;</j-btn>
+          <j-btn outline color="dark" @click="onCopy">Copy to clipboard &#8629;</j-btn>
         </div>
         <div>
-          <j-btn kind="danger" @click="onDelete">Delete</j-btn>
+          <j-btn outline color="danger" @click="onDelete">Delete &#9888;</j-btn>
         </div>
       </div>
       <div class="card-text">
@@ -34,9 +34,11 @@ export default {
   </div>`,
   methods: {
     async onDelete() {
-      await this.$store.dispatch('editableRecipe/DELETE_RECIPE')
-      if (!this.$store.state.messages.delete_recipe.length) {
-        this.$router.push('/')
+      if (confirm(`Are you sure you want to delete "${this.recipe.title}"? This action cannot be undone.`)) {
+        await this.$store.dispatch('editableRecipe/DELETE_RECIPE')
+        if (!this.$store.state.messages.delete_recipe.length) {
+          this.$router.push('/')
+        }
       }
     },
     onCopy() {
