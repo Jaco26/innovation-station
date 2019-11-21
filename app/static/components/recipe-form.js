@@ -1,4 +1,7 @@
 
+const listItemRe = /^•|^-/
+
+
 export default {
   name: 'TheRecipeForm',
   props: {
@@ -29,15 +32,18 @@ export default {
         line = line.replace(/>/g, '&gt;')
 
         // Create unordered list tags
-        if (/^-|^•/.test(line)) {
-          const prev = lines[i - 1]
-          const next = lines[i + 1]
+        if (listItemRe.test(line)) {
+          
+          const prev = lines[i - 1] ? lines[i - 1].trim() : ''
+          const next = lines[i + 1] ? lines[i + 1].trim() : ''
     
           line = `<li>${line.slice(1).trim()}</li>`
     
-          if (!prev || !/^-|^•/.test(prev))
+          if (!listItemRe.test(prev) && !listItemRe.test(next))
+            line = `<ul>${line}</ul>`
+          else if (!listItemRe.test(prev))
             line = `<ul>${line}`
-          else if (!next || !/^-|^•/.test(next))
+          else if (!listItemRe.test(next))
             line = `${line}</ul>`
         }
     
