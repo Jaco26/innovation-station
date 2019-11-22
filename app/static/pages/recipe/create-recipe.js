@@ -38,6 +38,7 @@ export default {
     <div class="col-md-6">
       <recipe-form
         label="Add a new recipe"
+        :messages="$store.state.messages.add_recipe"
         :title.sync="title"
         :description.sync="description"
         :markdown.sync="markdown"

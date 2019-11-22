@@ -15,6 +15,8 @@ export default {
   render(h, ctx) {
     let classes = `btn`
 
+    const attrs = ctx.data.attrs || {}
+
     if (ctx.props.outline) classes += ` btn-outline-${ctx.props.color}`
     else classes += ` btn-${ctx.props.color}`
 
@@ -24,8 +26,8 @@ export default {
       {
         ...ctx.data,
         attrs: {
-          type: ctx.data.attrs.type || 'button',
-          disabled: ctx.props.busy || ctx.data.attrs.disabled,
+          type: attrs.type || 'button',
+          disabled: ctx.props.busy || attrs.disabled,
         },
         class: classes,
       },

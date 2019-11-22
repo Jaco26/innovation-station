@@ -31,6 +31,7 @@ export default {
         commit('CLEAR_MESSAGES', 'add_recipe', { root: true })
         const res = await this.$api.post('/recipe', state)
         commit('recipes/UPDATE_RECIPE_COLLECTION', { ...state, ...res.data }, { root: true })
+        commit('RESET')
       } catch (error) {
         if (error.response && error.response.data.message) {
           commit('UPDATE_MESSAGES', ['add_recipe', error.response.data.message], { root: true })

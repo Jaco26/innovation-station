@@ -1,12 +1,12 @@
 import os
 import uuid
+import sqlite3
 from sqlite3 import Error as SQLError
 from datetime import datetime
 from flask import Blueprint, request, jsonify, abort, current_app
 from werkzeug.exceptions import NotFound
 from app.db import get_db
-from app.api_flask import ApiResponse
-# from app.custom_error_handler import CustomErrorHandler
+from app.util import ApiResponse
 
 api = Blueprint('api', __name__)
 
@@ -118,6 +118,59 @@ def recipe(id=''):
       db.execute('DELETE FROM recipe WHERE id=?', (id,))
       db.commit()
       return res
+
+  except BaseException as e:
+    res.status = 500
+    if current_app.config['ENV'] == 'development':
+      res.message = str(e)
+    return res
+
+
+@api.route('/tags')
+def get_tags():
+  res = ApiResponse()
+  db = get_db()
+  res.data = [dict(row) for row in db.execute('SELECT * FROM tag').fetchall()]
+  return res
+
+
+@api.route('/tag', methods=['POST'])
+@api.route('/tag/<id>', methods=['GET', 'PUT', 'DELETE'])
+def tag(id=None):
+  body = request.get_json()
+  res = ApiResponse()
+
+  try:
+    db = get_db()
+
+    if request.method == 'GET':
+      query = '''SELECT * FROM recipe JOIN recipe_tag 
+                  ON recipe.id = recipe_tag.recipe_id
+                  WHERE recipe_tag.tag_id = ?'''
+      res.data = [dict(row) for row in db.execute(query, [id]).fetchall()]
+      return res
+    
+    elif request.method == 'POST':
+      try:
+        query = 'INSERT INTO tag (id, name) VALUES (?, ?)'
+        db.execute(query, [uuid.uuid4().hex, body['name']])
+        db.commit()
+        res.status = 201
+      except BaseException as e:
+        msg = str(e)
+        if msg.startswith('UNIQUE constraint failed'):
+          res.status = 200
+        else:
+          res.status = 500
+
+      return res
+
+
+    elif request.method == 'PUT':
+      pass
+
+    elif request.method == 'DELETE':
+      pass
 
   except BaseException as e:
     res.status = 500
